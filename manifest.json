@@ -1,0 +1,14 @@
+{
+  "name": "LUMEN — Study without static.",
+  "short_name": "LUMEN",
+  "description": "A premium, offline-ready study dashboard: batches, subjects, topics, video and notes in one calm dark interface.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#05060d",
+  "theme_color": "#05060d",
+  "icons": [
+    { "src": "icons/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

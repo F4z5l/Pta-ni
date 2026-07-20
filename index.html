@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1" />
+<title>LUMEN — Study without static.</title>
+<meta name="description" content="LUMEN is a premium, offline-ready study dashboard: batches, subjects, topics, video and notes, in one calm dark interface." />
+<meta name="theme-color" content="#05060d" />
+<link rel="manifest" href="manifest.json" />
+<link rel="icon" href="icons/icon.svg" type="image/svg+xml" />
+<link rel="apple-touch-icon" href="icons/icon.svg" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet" />
+
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<!-- ============================= SPLASH ============================= -->
+<div id="splash" class="splash" aria-hidden="true">
+  <div class="splash-mark">
+    <svg viewBox="0 0 100 100" class="splash-ring">
+      <circle cx="50" cy="50" r="42" />
+    </svg>
+    <span class="splash-glyph">L</span>
+  </div>
+  <p class="splash-word">LUMEN</p>
+  <p class="splash-tag">Study without static.</p>
+</div>
+
+<!-- ============================= ONBOARDING ============================= -->
+<div id="onboarding" class="onboarding" hidden>
+  <div class="onboarding-card">
+    <div class="onboarding-mark">L</div>
+    <h1>Set up your space</h1>
+    <p class="dim">Just a name — everything stays on this device.</p>
+    <label class="field">
+      <span>Your name</span>
+      <input id="onboarding-name" type="text" placeholder="e.g. Aarav Sharma" maxlength="30" autocomplete="off" />
+    </label>
+    <div class="avatar-pick" id="avatar-pick" role="radiogroup" aria-label="Choose an avatar style"></div>
+    <button class="btn-primary rippleable" id="onboarding-submit">Enter LUMEN</button>
+  </div>
+</div>
+
+<!-- ============================= APP SHELL ============================= -->
+<div id="app" class="app" hidden>
+
+  <canvas id="particles" class="particles" aria-hidden="true"></canvas>
+
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark">L</span>
+      <span class="brand-name">LUMEN</span>
+    </div>
+    <div class="topbar-actions">
+      <button class="icon-btn rippleable" id="btn-open-search" aria-label="Search">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </button>
+      <button class="avatar-btn rippleable" id="btn-open-profile" aria-label="Open profile">
+        <img id="topbar-avatar" alt="" />
+      </button>
+    </div>
+  </header>
+
+  <!-- ---------- Search overlay ---------- -->
+  <div id="search-panel" class="search-panel" aria-hidden="true">
+    <div class="search-bar">
+      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input id="search-input" type="text" placeholder="Search batches, topics, notes…" autocomplete="off" />
+      <button id="btn-close-search" class="icon-btn rippleable" aria-label="Close search">
+        <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div id="search-results" class="search-results"></div>
+  </div>
+
+  <!-- ---------- Screen stack (router mounts here) ---------- -->
+  <main id="screen-stack" class="screen-stack"></main>
+
+  <!-- ---------- Floating bottom nav ---------- -->
+  <nav class="bottom-nav" aria-label="Primary">
+    <button class="nav-item rippleable active" data-tab="home" aria-current="page">
+      <svg viewBox="0 0 24 24"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v9.5a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V10"/></svg>
+      <span>Home</span>
+    </button>
+    <button class="nav-item rippleable" data-tab="favorites">
+      <svg viewBox="0 0 24 24"><path d="M12 20s-7-4.35-9.5-9A5.5 5.5 0 0 1 12 6a5.5 5.5 0 0 1 9.5 5c-2.5 4.65-9.5 9-9.5 9Z"/></svg>
+      <span>Favorites</span>
+    </button>
+    <button class="nav-item rippleable" data-tab="profile">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4.4 3.6-7 8-7s8 2.6 8 7"/></svg>
+      <span>Profile</span>
+    </button>
+    <span class="nav-glow" id="nav-glow" aria-hidden="true"></span>
+  </nav>
+
+  <!-- ---------- Toast ---------- -->
+  <div id="toast" class="toast" role="status" aria-live="polite">
+    <span class="toast-icon">✦</span>
+    <span class="toast-msg">Saved</span>
+  </div>
+
+  <!-- ---------- Quality selector modal ---------- -->
+  <div id="modal-quality" class="modal" aria-hidden="true">
+    <div class="modal-backdrop" data-close-modal="modal-quality"></div>
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <h3>Choose quality</h3>
+      <p class="dim modal-sub" id="quality-title">—</p>
+      <div class="quality-grid" id="quality-grid"></div>
+      <button class="btn-ghost rippleable" data-close-modal="modal-quality">Cancel</button>
+    </div>
+  </div>
+
+  <!-- ---------- Player modal ---------- -->
+  <div id="modal-player" class="modal" aria-hidden="true">
+    <div class="modal-backdrop" data-close-modal="modal-player"></div>
+    <div class="modal-sheet modal-sheet--player">
+      <div class="modal-handle"></div>
+      <div class="player-stage">
+        <div class="player-orbit"><span></span><span></span><span></span></div>
+        <p id="player-title" class="player-title">—</p>
+        <p class="dim" id="player-status">Buffering demo stream…</p>
+      </div>
+      <div class="player-progress"><div id="player-progress-fill" class="player-progress-fill"></div></div>
+      <button class="btn-ghost rippleable" data-close-modal="modal-player">Close</button>
+    </div>
+  </div>
+
+  <!-- ---------- PDF modal ---------- -->
+  <div id="modal-pdf" class="modal" aria-hidden="true">
+    <div class="modal-backdrop" data-close-modal="modal-pdf"></div>
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <div class="pdf-icon">▤</div>
+      <h3 id="pdf-title">—</h3>
+      <p class="dim" id="pdf-meta">—</p>
+      <button class="btn-primary rippleable" id="pdf-open-btn">Open notes</button>
+      <button class="btn-ghost rippleable" data-close-modal="modal-pdf">Close</button>
+    </div>
+  </div>
+
+  <!-- ---------- Profile edit modal ---------- -->
+  <div id="modal-edit-profile" class="modal" aria-hidden="true">
+    <div class="modal-backdrop" data-close-modal="modal-edit-profile"></div>
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <h3>Edit profile</h3>
+      <label class="field">
+        <span>Name</span>
+        <input id="edit-name" type="text" maxlength="30" />
+      </label>
+      <div class="field-row">
+        <button class="btn-primary rippleable" id="edit-save-btn">Save changes</button>
+        <button class="btn-ghost rippleable" data-close-modal="modal-edit-profile">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script src="js/config.js"></script>
+<script src="js/mockData.js"></script>
+<script src="js/api.js"></script>
+<script src="js/store.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/router.js"></script>
+<script src="js/screens.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
